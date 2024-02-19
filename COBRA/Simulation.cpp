@@ -226,7 +226,7 @@ void Simulation::run_TOTP(bool verbose) {
           continue;
         for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
              it++) {
-          if (it->ag_arrive_goal > 0)
+          if (it->state == WAIT || it->ag_arrive_goal > 0)
             continue;
           zero_flag = true;
           break;
