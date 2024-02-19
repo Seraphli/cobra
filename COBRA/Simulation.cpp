@@ -41,7 +41,7 @@ void Simulation::LoadMap(string fname) {
   ifstream myfile(fname.c_str());
   if (!myfile.is_open()) {
     cerr << "Map file not found." << endl;
-    system("PAUSE");
+    // system("PAUSE");
     return;
   }
   // read file
@@ -144,7 +144,7 @@ void Simulation::LoadTask(string fname) {
   ifstream myfile(fname.c_str());
   if (!myfile.is_open()) {
     cerr << "Task file not found." << endl;
-    system("PAUSE");
+    // system("PAUSE");
     return;
   }
   // read file
@@ -320,7 +320,7 @@ void Simulation::run_TPTR() {
     if (!ag->TPTR(token)) // not get a task
     {
       cerr << "Not get a task." << endl;
-      system("PAUSE");
+      // system("PAUSE");
     }
     computation_time += std::clock() - start;
     /*if (!TestConstraints())

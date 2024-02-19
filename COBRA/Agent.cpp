@@ -203,6 +203,7 @@ bool Agent::TOTP(Token &token, bool verbose) {
     task->ag = this;
     task->ag_arrive_start = arrive_start;
     task->ag_arrive_goal = arrive_goal;
+    task->state = TAKEN;
     // cout << "Task " << task->start->loc << "-->" << task->goal->loc << " is
     // done at Timestep " << task->ag_arrive_goal << endl;
     token.tasks.remove(task);
