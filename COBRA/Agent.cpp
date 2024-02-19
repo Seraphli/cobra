@@ -194,7 +194,10 @@ bool Agent::TOTP(Token &token, bool verbose) {
     // show
     if (verbose) {
       std::cout << "Agent " << id << " take task " << task->id << " "
-                << task->start->loc << " --> " << task->goal->loc;
+                << task->start->loc % col - 1 << ","
+                << task->start->loc / col - 1 << " --> "
+                << task->goal->loc % col - 1 << ","
+                << task->goal->loc / col - 1;
       std::cout << "	Timestep " << token.timestep << "-->" << arrive_goal
                 << endl;
     }
