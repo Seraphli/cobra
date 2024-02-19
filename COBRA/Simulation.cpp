@@ -1,12 +1,9 @@
 
 #include <ctime>
-#include <filesystem>
 #include <iostream>
 
 #include "Agent.h"
 #include "Simulation.h"
-
-namespace fs = std::__fs::filesystem;
 
 Simulation::Simulation(string map_name, string task_name, bool debug)
     : debug(debug) {
@@ -21,14 +18,20 @@ Simulation::Simulation(string map_name, string task_name, bool debug)
 
 Simulation::~Simulation() {}
 
-void copyFile(const fs::path &sourcePath, const fs::path &destinationPath) {
-  std::error_code ec; // 用于错误处理
-  fs::copy_file(sourcePath, destinationPath,
-                fs::copy_options::overwrite_existing, ec);
+void copyFile(const std::string &sourcePath,
+              const std::string &destinationPath) {
+  std::ifstream src(sourcePath, std::ios::binary);
+  std::ofstream dst(destinationPath, std::ios::binary);
 
-  if (ec) { // 检查是否有错误发生
-    std::cerr << "Error copying file: " << ec.message() << std::endl;
+  if (!src.is_open() || !dst.is_open()) {
+    std::cerr << "Error opening file." << std::endl;
+    return;
   }
+
+  dst << src.rdbuf();
+
+  src.close();
+  dst.close();
 }
 
 void Simulation::LoadMap(string fname) {
