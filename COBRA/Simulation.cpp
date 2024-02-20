@@ -258,7 +258,7 @@ void Simulation::run_TOTP(bool verbose) {
     if (!ag->TOTP(token, verbose)) // not get a task
     {
       if (verbose)
-        cerr << "Not get a task." << endl;
+        cerr << "Agent " << ag->id << " not get a task." << endl;
       // system("PAUSE");
     }
     computation_time += std::clock() - start;

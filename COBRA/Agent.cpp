@@ -161,7 +161,7 @@ bool Agent::TOTP(Token &token, bool verbose) {
     int arrive_start = AStar(loc, token.timestep, *task->start, token, id);
     if (arrive_start < 0) {
       if (verbose)
-        cerr << "Can not find a path to start" << endl;
+        cerr << "Agent " << id << " can not find a path to start" << endl;
       this->finish_time = token.timestep + 1;
       return false;
       // system("PAUSE");
@@ -174,7 +174,7 @@ bool Agent::TOTP(Token &token, bool verbose) {
     if (arrive_goal < 0) // find a path to goal
     {
       if (verbose)
-        cerr << "Can not find a path to goal" << endl;
+        cerr << "Agent " << id << " can not find a path to start" << endl;
       this->finish_time = token.timestep + 1;
       return false;
       // system("PAUSE");
