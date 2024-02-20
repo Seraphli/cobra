@@ -56,7 +56,8 @@ int main(int argc, char **argv) {
 
     if (algorithm == "TP") {
       Simulation simu(vm["map"].as<string>(), vm["task"].as<string>(),
-                      vm["deadline"].as<int>(), vm["debug"].as<bool>());
+                      vm["deadline"].as<unsigned int>(),
+                      vm["debug"].as<bool>());
       simu.run_TOTP(vm["verbose"].as<bool>());
       simu.SavePathUntilTimestep(vm["output-path"].as<string>(),
                                  simu.end_timestep);
@@ -64,7 +65,8 @@ int main(int argc, char **argv) {
                                  simu.end_timestep);
     } else if (algorithm == "TPTS") {
       Simulation simu(vm["map"].as<string>(), vm["task"].as<string>(),
-                      vm["deadline"].as<int>(), vm["debug"].as<bool>());
+                      vm["deadline"].as<unsigned int>(),
+                      vm["debug"].as<bool>());
       simu.run_TPTR(vm["verbose"].as<bool>());
       simu.SavePathUntilTimestep(vm["output-path"].as<string>(),
                                  simu.end_timestep);
