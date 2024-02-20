@@ -74,7 +74,7 @@ Agent::Agent(const Agent &ag) {
   finish_time = ag.finish_time;
   task = ag.task;
   row = ag.row;
-  col = col;
+  col = ag.col;
 }
 Agent::~Agent() {}
 
@@ -88,7 +88,7 @@ void Agent::reset(const Agent &ag) {
   finish_time = ag.finish_time;
   task = ag.task;
   row = ag.row;
-  col = col;
+  col = ag.col;
 }
 void Agent::Set(int loc, int col, int row, int id, unsigned int maxtime) {
   this->loc = loc;
@@ -193,13 +193,11 @@ bool Agent::TOTP(Token &token, bool verbose) {
 
     // show
     if (verbose) {
-      std::cout << "Agent " << id << " take task " << task->id << " "
-                << task->start->loc % col - 1 << ","
-                << task->start->loc / col - 1 << " --> "
-                << task->goal->loc % col - 1 << ","
-                << task->goal->loc / col - 1;
-      std::cout << "	Timestep " << token.timestep << "-->" << arrive_goal
-                << endl;
+      cout << "Agent " << id << " take task " << task->id << " "
+           << task->start->loc % col - 1 << "," << task->start->loc / col - 1
+           << " --> " << task->goal->loc % col - 1 << ","
+           << task->goal->loc / col - 1;
+      cout << "	Timestep " << token.timestep << "-->" << arrive_goal << endl;
     }
 
     // update task
@@ -216,7 +214,7 @@ bool Agent::TOTP(Token &token, bool verbose) {
 
   return false;
 }
-bool Agent::TPTR(Token &token) {
+bool Agent::TPTR(Token &token, bool verbose) {
   // a copy of token and agent
   Token token_copy(token);
   Agent agent_copy(*this);
@@ -307,9 +305,15 @@ bool Agent::TPTR(Token &token) {
           if (WAIT == n.task->state) // no agent took this task before
           {
             // show
-            // cout << "Agent " << id << " takes task " << n.task->start->loc <<
-            // " --> " << n.task->goal->loc; cout << "	Timestep " <<
-            // token.timestep << "-->" << arrive_goal << endl;
+            if (verbose) {
+              cout << "Agent " << id << " take task " << n.task->id << " "
+                   << n.task->start->loc % col - 1 << ","
+                   << n.task->start->loc / col - 1 << " --> "
+                   << n.task->goal->loc % col - 1 << ","
+                   << n.task->goal->loc / col - 1;
+              cout << " at Timestep " << token.timestep << "-->" << arrive_goal
+                   << endl;
+            }
 
             // update task
             n.task->state = TAKEN;
@@ -321,10 +325,16 @@ bool Agent::TPTR(Token &token) {
           {
             Agent *old_ag = n.task->ag;
             // show
-            // cout << "Agent " << id << " swaps task " << n.task->start->loc <<
-            // " --> " << n.task->goal->loc << " with Agent "<<old_ag->id; cout
-            // << " at Timestep " << token.timestep << "-->" << arrive_goal <<
-            // endl;
+            if (verbose) {
+              cout << "Agent " << id << " swaps task " << n.task->id << " "
+                   << n.task->start->loc % col - 1 << ","
+                   << n.task->start->loc / col - 1 << " --> "
+                   << n.task->goal->loc % col - 1 << ","
+                   << n.task->goal->loc / col - 1 << " with Agent "
+                   << old_ag->id;
+              cout << " at Timestep " << token.timestep << "-->" << arrive_goal
+                   << endl;
+            }
 
             // update task
             n.task->ag = this;
@@ -332,7 +342,7 @@ bool Agent::TPTR(Token &token) {
             n.task->ag_arrive_goal = arrive_goal;
 
             // pass token
-            if (old_ag->TPTR(token)) // swap succeed
+            if (old_ag->TPTR(token, verbose)) // swap succeed
             {
               return true;
             } else // give up

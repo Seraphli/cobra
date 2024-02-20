@@ -23,7 +23,7 @@ public:
   void Set(int loc, int col, int row, int id, unsigned int maxtime);
   void reset(const Agent &ag);
   bool TOTP(Token &token, bool verbose); // time ordered token passing
-  bool TPTR(Token &token);               // token passing and task robbing
+  bool TPTR(Token &token, bool verbose); // token passing and task robbing
 
 public:
   vector<unsigned int> path;

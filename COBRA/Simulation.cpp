@@ -1,4 +1,5 @@
 
+#include <boost/core/serialization.hpp>
 #include <ctime>
 #include <iostream>
 
@@ -191,7 +192,8 @@ void Simulation::LoadTask(string fname) {
 }
 
 void Simulation::run_TOTP(bool verbose) {
-  // cout << endl << "************TOTP************" << endl;
+  if (verbose)
+    cout << endl << "************TOTP************" << endl;
 
   while (!token.tasks.empty() || token.timestep <= t_task) {
     // pick of  the first agent in the waiting line
@@ -267,8 +269,9 @@ void Simulation::run_TOTP(bool verbose) {
   }
 }
 
-void Simulation::run_TPTR() {
-  cout << endl << "************TPTR************" << endl;
+void Simulation::run_TPTR(bool verbose) {
+  if (verbose)
+    cout << endl << "************TPTR************" << endl;
 
   while (!token.tasks.empty() || token.timestep <= t_task) {
     // pick off the first agent in the waiting line
@@ -294,6 +297,25 @@ void Simulation::run_TPTR() {
     token.timestep = ag->finish_time;
     ag->loc = ag->path[token.timestep];
 
+    if (token.timestep > 0) {
+      end_timestep = token.timestep;
+      bool zero_flag = false;
+      for (unsigned int i = 0; i < 1; i++) {
+        if (tasks[i].size() == 0)
+          continue;
+        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+             it++) {
+          if (it->state == WAIT || it->ag_arrive_goal > 0)
+            continue;
+          zero_flag = true;
+          break;
+        }
+      }
+      if (zero_flag)
+        end_timestep = 0;
+      break;
+    }
+
     // delete finished tasks
     list<Task *>::iterator it = token.tasks.begin();
     while (it != token.tasks.end()) {
@@ -317,7 +339,7 @@ void Simulation::run_TPTR() {
     //**************end test**********************
     num_computations++;
     clock_t start = std::clock();
-    if (!ag->TPTR(token)) // not get a task
+    if (!ag->TPTR(token, verbose)) // not get a task
     {
       cerr << "Not get a task." << endl;
       // system("PAUSE");

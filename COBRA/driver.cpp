@@ -62,7 +62,11 @@ int main(int argc, char **argv) {
     } else if (algorithm == "TPTS") {
       Simulation simu(vm["map"].as<string>(), vm["task"].as<string>(),
                       vm["debug"].as<bool>());
-      simu.run_TPTR();
+      simu.run_TPTR(vm["verbose"].as<bool>());
+      simu.SavePathUntilTimestep(vm["output-path"].as<string>(),
+                                 simu.end_timestep);
+      simu.SaveTaskUntilTimestep(vm["output-task"].as<string>(),
+                                 simu.end_timestep);
     }
 
   } catch (exception &e) {

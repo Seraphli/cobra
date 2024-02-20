@@ -26,7 +26,7 @@ public:
 
   // run
   void run_TOTP(bool verbose);
-  void run_TPTR();
+  void run_TPTR(bool verbose);
 
   // save
   void ShowTask();
