@@ -1,6 +1,7 @@
 #include "Simulation.h"
 // #include <algorithm>
 #include <boost/program_options.hpp>
+#include <boost/program_options/value_semantic.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -32,6 +33,8 @@ int main(int argc, char **argv) {
                                      validate_string(val, valid_algorithms);
                                    }),
                                "algorithm to use (TP or TPTS)")(
+        "deadline,l", po::value<unsigned int>()->default_value(1000),
+        "deadline for the simulation in ms")(
         "output-path,p", po::value<string>()->default_value("path.txt"),
         "output path file")("output-task,k",
                             po::value<string>()->default_value("task.txt"),
@@ -53,7 +56,7 @@ int main(int argc, char **argv) {
 
     if (algorithm == "TP") {
       Simulation simu(vm["map"].as<string>(), vm["task"].as<string>(),
-                      vm["debug"].as<bool>());
+                      vm["deadline"].as<int>(), vm["debug"].as<bool>());
       simu.run_TOTP(vm["verbose"].as<bool>());
       simu.SavePathUntilTimestep(vm["output-path"].as<string>(),
                                  simu.end_timestep);
@@ -61,7 +64,7 @@ int main(int argc, char **argv) {
                                  simu.end_timestep);
     } else if (algorithm == "TPTS") {
       Simulation simu(vm["map"].as<string>(), vm["task"].as<string>(),
-                      vm["debug"].as<bool>());
+                      vm["deadline"].as<int>(), vm["debug"].as<bool>());
       simu.run_TPTR(vm["verbose"].as<bool>());
       simu.SavePathUntilTimestep(vm["output-path"].as<string>(),
                                  simu.end_timestep);

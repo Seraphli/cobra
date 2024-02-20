@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <chrono>
 #include <climits>
 #include <cstring>
 #include <fstream>
@@ -18,10 +19,11 @@
 #include "Endpoint.h"
 
 using namespace std;
+using Time = std::chrono::steady_clock;
 
 class Simulation {
 public:
-  Simulation(string map_name, string task_name, bool debug);
+  Simulation(string map_name, string task_name, unsigned int deadline_time, bool debug);
   ~Simulation();
 
   // run
@@ -36,20 +38,23 @@ public:
   void SaveTaskUntilTimestep(const string &fname, const int timestep);
   void SaveThroughput(const string &fname);
 
+  unsigned int deadline_time;
   bool debug;
   double computation_time;
   int num_computations;
-  int end_timestep;
+  unsigned int end_timestep;
 
 private:
   // initialize
   void LoadMap(string fname);
   void LoadTask(string fname);
+  double elapsed_ms() const;
   void SaveDebugInfo(const string &fname);
   // test
   bool TestConstraints();
 
 private:
+  Time::time_point t_s;
   int row, col;
   Token token;
   vector<list<Task>> tasks;

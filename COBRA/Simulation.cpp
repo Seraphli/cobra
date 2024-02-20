@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <boost/core/serialization.hpp>
 #include <ctime>
 #include <iostream>
@@ -6,8 +7,9 @@
 #include "Agent.h"
 #include "Simulation.h"
 
-Simulation::Simulation(string map_name, string task_name, bool debug)
-    : debug(debug) {
+Simulation::Simulation(string map_name, string task_name, unsigned int deadline_time,
+                       bool debug)
+    : deadline_time(deadline_time), debug(debug) {
   computation_time = 0;
   num_computations = 0;
   LoadMap(map_name);
@@ -191,11 +193,35 @@ void Simulation::LoadTask(string fname) {
   */
 }
 
+double Simulation::elapsed_ms() const {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(Time::now() -
+                                                               t_s)
+      .count();
+}
+
 void Simulation::run_TOTP(bool verbose) {
   if (verbose)
     cout << endl << "************TOTP************" << endl;
 
+  t_s = Time::now();
+
   while (!token.tasks.empty() || token.timestep <= t_task) {
+    if (elapsed_ms() > deadline_time) {
+      end_timestep = token.timestep;
+      for (unsigned int i = 0; i < 1; i++) {
+        if (tasks[i].size() == 0)
+          continue;
+        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+             it++) {
+          if (it->state == TAKEN)
+            end_timestep = min(end_timestep, it->ag_arrive_goal);
+        }
+      }
+      if (verbose)
+        cerr << "Deadline reached." << endl;
+      break;
+    }
+
     // pick of  the first agent in the waiting line
     Agent *ag = &agents[0];
     for (int i = 1; i < agents.size(); i++) {
@@ -233,6 +259,8 @@ void Simulation::run_TOTP(bool verbose) {
           zero_flag = true;
           break;
         }
+        if (zero_flag)
+          break;
       }
       if (zero_flag)
         end_timestep = 0;
@@ -273,7 +301,24 @@ void Simulation::run_TPTR(bool verbose) {
   if (verbose)
     cout << endl << "************TPTR************" << endl;
 
+  t_s = Time::now();
+
   while (!token.tasks.empty() || token.timestep <= t_task) {
+    if (elapsed_ms() > deadline_time) {
+      end_timestep = token.timestep;
+      for (unsigned int i = 0; i < 1; i++) {
+        if (tasks[i].size() == 0)
+          continue;
+        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+             it++) {
+          if (it->state == TAKEN)
+            end_timestep = min(end_timestep, it->ag_arrive_goal);
+        }
+      }
+      if (verbose)
+        cerr << "Deadline reached." << endl;
+      break;
+    }
     // pick off the first agent in the waiting line
     Agent *ag = &agents[0];
     for (int i = 1; i < agents.size(); i++) {
@@ -310,6 +355,8 @@ void Simulation::run_TPTR(bool verbose) {
           zero_flag = true;
           break;
         }
+        if (zero_flag)
+          break;
       }
       if (zero_flag)
         end_timestep = 0;
