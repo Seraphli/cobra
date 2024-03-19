@@ -6,8 +6,8 @@
 #include "Agent.h"
 #include "Simulation.h"
 
-Simulation::Simulation(string map_name, string task_name, unsigned int deadline_time,
-                       bool debug)
+Simulation::Simulation(string map_name, string task_name,
+                       unsigned int deadline_time, bool debug)
     : deadline_time(deadline_time), debug(debug) {
   computation_time = 0;
   num_computations = 0;
@@ -387,7 +387,8 @@ void Simulation::run_TPTR(bool verbose) {
     clock_t start = std::clock();
     if (!ag->TPTR(token, verbose)) // not get a task
     {
-      cerr << "Not get a task." << endl;
+      if (verbose)
+        cerr << "Not get a task." << endl;
       // system("PAUSE");
     }
     computation_time += std::clock() - start;
