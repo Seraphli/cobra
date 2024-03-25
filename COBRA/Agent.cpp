@@ -347,7 +347,9 @@ bool Agent::TPTR(Token &token, bool verbose) {
               return true;
             } else // give up
             {
-              // cout << "Swap fails" << endl;
+              if (verbose)
+                cout << "Swap fails" << endl;
+              return true;
             }
           }
 

@@ -34,8 +34,10 @@ public:
   void ShowTask();
   void SavePath(const string &fname);
   void SavePathUntilTimestep(const string &fname, const int timestep);
+  void PrintPathUntilTimestep(const int timestep);
   void SaveTask(const string &fname, const string &instance_name);
   void SaveTaskUntilTimestep(const string &fname, const int timestep);
+  void PrintTaskUntilTimestep(const int timestep);
   void SaveThroughput(const string &fname);
 
   unsigned int deadline_time;

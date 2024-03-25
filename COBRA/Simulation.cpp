@@ -340,6 +340,11 @@ void Simulation::run_TPTR(bool verbose) {
     // update timestep
     token.timestep = ag->finish_time;
     ag->loc = ag->path[token.timestep];
+    if (verbose) {
+      cout << "Timestep: " << token.timestep << endl;
+      PrintPathUntilTimestep(token.timestep + 1);
+      PrintTaskUntilTimestep(token.timestep + 20);
+    }
 
     if (token.timestep > 0) {
       end_timestep = token.timestep;
@@ -368,8 +373,12 @@ void Simulation::run_TPTR(bool verbose) {
       if (TAKEN == (*it)->state && token.timestep >= (*it)->ag_arrive_start) {
         list<Task *>::iterator done = it++;
         token.tasks.erase(done);
-        // cout << "Task " << (*done)->start->loc << "-->" << (*done)->goal->loc
-        // << " is done at Timestep " << (*done)->ag_arrive_goal << endl;
+        if (verbose)
+          cout << "Task " << (*done)->start->loc % col - 1 << " "
+               << (*done)->start->loc / col - 1 << "-->"
+               << (*done)->goal->loc % col - 1 << " "
+               << (*done)->goal->loc / col - 1 << " is done at Timestep "
+               << (*done)->ag_arrive_goal << endl;
       } else {
         it++;
       }
@@ -578,6 +587,49 @@ void Simulation::SaveDebugInfo(const string &fname) {
     fout << x << "	" << y << endl;
   }
   fout.close();
+}
+
+void Simulation::PrintPathUntilTimestep(const int timestep) {
+  for (unsigned int i = 0; i < token.path.size(); i++) {
+    cout << timestep + 1 << " " << i << std::endl;
+    for (unsigned int j = 0; j <= timestep; j++) {
+      int x = token.path[i][j] % col - 1;
+      int y = token.path[i][j] / col - 1;
+      cout << x << "," << y << " ";
+    }
+    cout << std::endl;
+  }
+}
+
+void Simulation::PrintTaskUntilTimestep(const int timestep) {
+  // fout << mPanel->agents.size() << std::endl;
+  for (unsigned int i = 0; i < tasks.size(); i++) {
+    if (tasks[i].size() > 0) {
+      // fout << "Timestep " << i << " :	";
+      for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+           it++) {
+        // fout << "Agent " << it->ag->id << " delivers package from " <<
+        // it->start->loc << " to " << it->goal->loc
+        //	<< "	(" << it->ag_arrive_start << "," << it->ag_arrive_goal
+        //<< ")" << endl;
+        if (it->state == TAKEN && it->ag_arrive_goal <= timestep) {
+          if (it->ag_arrive_goal < it->ag_arrive_start) {
+            cout << "Error: ag_arrive_goal < ag_arrive_start" << endl;
+          }
+          cout << it->id << " " << it->ag->id << " " << it->start->loc % col - 1
+               << " " << it->start->loc / col - 1 << " "
+               << it->goal->loc % col - 1 << " " << it->goal->loc / col - 1
+               << " " << it->ag_arrive_start << " " << it->ag_arrive_goal
+               << endl;
+        }
+      }
+      // cout << "	";
+    }
+  }
+  // fout << endl << "Finishing Timestep:	" << LastFinish << endl;
+  // fout << "Sum of Task Waiting Time:	" << WaitingTime << endl;
+  //  fout << instance_name << " " << LastFinish << " " << WaitingTime << " " <<
+  //  computation_time / (double)LastFinish << endl;
 }
 
 bool Simulation::TestConstraints() // test vertex collision and edge collision
