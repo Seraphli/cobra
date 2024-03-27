@@ -553,7 +553,11 @@ void Simulation::SaveTaskUntilTimestep(const string &fname,
         // it->start->loc << " to " << it->goal->loc
         //	<< "	(" << it->ag_arrive_start << "," << it->ag_arrive_goal
         //<< ")" << endl;
-        if (it->state == TAKEN && it->ag_arrive_goal <= timestep) {
+        if (it->state == TAKEN &&
+            (it->ag_arrive_goal <= timestep ||
+             it->start->loc != it->goal->loc || it->goal_time > 0)) {
+          // it->start->loc != it->goal->loc indicate drop
+          // it->goal_time > 0 indicate drop blocked
           if (it->ag_arrive_goal < it->ag_arrive_start) {
             cout << "Error: ag_arrive_goal < ag_arrive_start" << endl;
           }
@@ -612,7 +616,11 @@ void Simulation::PrintTaskUntilTimestep(const int timestep) {
         // it->start->loc << " to " << it->goal->loc
         //	<< "	(" << it->ag_arrive_start << "," << it->ag_arrive_goal
         //<< ")" << endl;
-        if (it->state == TAKEN && it->ag_arrive_goal <= timestep) {
+        if (it->state == TAKEN &&
+            (it->ag_arrive_goal <= timestep ||
+             it->start->loc != it->goal->loc || it->goal_time > 0)) {
+          // it->start->loc != it->goal->loc indicate drop
+          // it->goal_time > 0 indicate drop blocked
           if (it->ag_arrive_goal < it->ag_arrive_start) {
             cout << "Error: ag_arrive_goal < ag_arrive_start" << endl;
           }
