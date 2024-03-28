@@ -247,22 +247,22 @@ void Simulation::run_TOTP(bool verbose) {
 
     if (token.timestep > 0) {
       end_timestep = token.timestep;
-      bool zero_flag = false;
-      for (unsigned int i = 0; i < 1; i++) {
-        if (tasks[i].size() == 0)
-          continue;
-        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
-             it++) {
-          if (it->state == WAIT || it->ag_arrive_goal > 0)
-            continue;
-          zero_flag = true;
-          break;
-        }
-        if (zero_flag)
-          break;
-      }
-      if (zero_flag)
-        end_timestep = 0;
+      // bool zero_flag = false;
+      // for (unsigned int i = 0; i < 1; i++) {
+      //   if (tasks[i].size() == 0)
+      //     continue;
+      //   for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+      //        it++) {
+      //     if (it->state == WAIT || it->ag_arrive_goal > 0)
+      //       continue;
+      //     zero_flag = true;
+      //     break;
+      //   }
+      //   if (zero_flag)
+      //     break;
+      // }
+      // if (zero_flag)
+      //   end_timestep = 0;
       break;
     }
 
@@ -348,22 +348,22 @@ void Simulation::run_TPTR(bool verbose) {
 
     if (token.timestep > 0) {
       end_timestep = token.timestep;
-      bool zero_flag = false;
-      for (unsigned int i = 0; i < 1; i++) {
-        if (tasks[i].size() == 0)
-          continue;
-        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
-             it++) {
-          if (it->state == WAIT || it->ag_arrive_goal > 0)
-            continue;
-          zero_flag = true;
-          break;
-        }
-        if (zero_flag)
-          break;
-      }
-      if (zero_flag)
-        end_timestep = 0;
+      // bool zero_flag = false;
+      // for (unsigned int i = 0; i < 1; i++) {
+      //   if (tasks[i].size() == 0)
+      //     continue;
+      //   for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+      //        it++) {
+      //     if (it->state == WAIT || it->ag_arrive_goal > 0)
+      //       continue;
+      //     zero_flag = true;
+      //     break;
+      //   }
+      //   if (zero_flag)
+      //     break;
+      // }
+      // if (zero_flag)
+      //   end_timestep = 0;
       break;
     }
 
