@@ -50,10 +50,10 @@ typedef enum { WAIT, TAKEN } TaskState;
 class Task {
 public:
   Task(unsigned int id, Endpoint *start, Endpoint *goal, int start_time,
-       int goal_time)
+       int goal_time, int aid)
       : id(id), start(start), goal(goal), start_time(start_time),
         goal_time(goal_time), state(WAIT), ag_arrive_start(start_time),
-        ag_arrive_goal(start_time) {}
+        ag_arrive_goal(start_time), aid(aid) {}
   ~Task() {}
 
   Endpoint *start;
@@ -61,6 +61,7 @@ public:
 
   Agent *ag;
   unsigned int id;
+  int aid;
   unsigned int ag_arrive_start;
   unsigned int ag_arrive_goal;
   int start_time; // min time agent need to spend at start point
@@ -78,6 +79,7 @@ public:
   vector<bool> my_map;
   vector<bool> my_endpoints;
   list<Task *> tasks;
+  vector<list<Task *>> ag_tasks;
   vector<Agent *> agents;
 
   vector<vector<unsigned int>> path; // path[agent][time] = loc

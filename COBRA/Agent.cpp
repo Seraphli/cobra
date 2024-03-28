@@ -226,10 +226,18 @@ bool Agent::TPTR(Token &token, bool verbose) {
   boost::heap::fibonacci_heap<HeuristicNode,
                               boost::heap::compare<CompareHeuristic>>
       heuristic;
-  for (list<Task *>::iterator it = token.tasks.begin(); it != token.tasks.end();
-       it++) {
-    heuristic.push(
-        HeuristicNode((*it)->start->loc, (*it), (*it)->start->h_val[loc]));
+  if (token.ag_tasks[id].empty()) {
+    for (list<Task *>::iterator it = token.tasks.begin();
+         it != token.tasks.end(); it++) {
+      heuristic.push(
+          HeuristicNode((*it)->start->loc, (*it), (*it)->start->h_val[loc]));
+    }
+  } else {
+    for (list<Task *>::iterator it = token.ag_tasks[id].begin();
+         it != token.ag_tasks[id].end(); it++) {
+      heuristic.push(
+          HeuristicNode((*it)->start->loc, (*it), (*it)->start->h_val[loc]));
+    }
   }
 
   while (!heuristic.empty()) {
@@ -366,6 +374,14 @@ bool Agent::TPTR(Token &token, bool verbose) {
     }
   }
   // agent fails to get a task
+  if (!token.ag_tasks[id].empty()) {
+    for (int i = token.timestep + 1; i < maxtime; i++) {
+      path[i] = path[token.timestep];
+      token.path[id][i] = path[token.timestep];
+    }
+    finish_time = token.timestep + 1;
+    return true;
+  }
   if (token.my_endpoints[loc]) // if agent is at an endpoint now
   {
     // check whether this location is a goal of a task

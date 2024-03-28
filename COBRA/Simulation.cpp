@@ -78,6 +78,7 @@ void Simulation::LoadMap(string fname) {
   endpoints.resize(workpoint_num + agent_num);
   token.my_map.resize(row * col);
   token.my_endpoints.resize(row * col);
+  token.ag_tasks.resize(agent_num);
 
   // read map
   int ep = 0, ag = 0;
@@ -157,20 +158,24 @@ void Simulation::LoadTask(string fname) {
   ss >> task_num; // number of tasks
   tasks.resize(maxtime);
   for (int i = 0; i < task_num; i++) {
-    int s, g, ts, tg;
+    int s, g, ts, tg, aid;
     getline(myfile, line);
     ss.clear();
     ss << line;
-    ss >> t_task >> s >> g >> ts >>
-        tg; // time + start + goal + time at start + time at goal
-    tasks[t_task].push_back(Task(i, &endpoints[s], &endpoints[g], ts, tg));
+    ss >> t_task >> s >> g >> ts >> tg >>
+        aid; // time + start + goal + time at start + time at goal
+    tasks[t_task].push_back(Task(i, &endpoints[s], &endpoints[g], ts, tg, aid));
   }
   myfile.close();
 
   if (!tasks[0].empty()) {
     for (list<Task>::iterator it = tasks[0].begin(); it != tasks[0].end();
          it++) {
-      token.tasks.push_back(&(*it));
+      if (it->aid == -1) {
+        token.tasks.push_back(&(*it));
+      } else {
+        token.ag_tasks[it->aid].push_back(&(*it));
+      }
     }
   }
 
@@ -251,7 +256,8 @@ void Simulation::run_TOTP(bool verbose) {
       // for (unsigned int i = 0; i < 1; i++) {
       //   if (tasks[i].size() == 0)
       //     continue;
-      //   for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+      //   for (list<Task>::iterator it = tasks[i].begin(); it !=
+      //   tasks[i].end();
       //        it++) {
       //     if (it->state == WAIT || it->ag_arrive_goal > 0)
       //       continue;
@@ -334,7 +340,11 @@ void Simulation::run_TPTR(bool verbose) {
         continue;
       for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
            it++) {
-        token.tasks.push_back(&(*it));
+        if (it->aid == -1) {
+          token.tasks.push_back(&(*it));
+        } else {
+          token.ag_tasks[it->aid].push_back(&(*it));
+        }
       }
     }
     // update timestep
@@ -352,7 +362,8 @@ void Simulation::run_TPTR(bool verbose) {
       // for (unsigned int i = 0; i < 1; i++) {
       //   if (tasks[i].size() == 0)
       //     continue;
-      //   for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
+      //   for (list<Task>::iterator it = tasks[i].begin(); it !=
+      //   tasks[i].end();
       //        it++) {
       //     if (it->state == WAIT || it->ag_arrive_goal > 0)
       //       continue;
@@ -373,6 +384,21 @@ void Simulation::run_TPTR(bool verbose) {
       if (TAKEN == (*it)->state && token.timestep >= (*it)->ag_arrive_start) {
         list<Task *>::iterator done = it++;
         token.tasks.erase(done);
+        if (verbose)
+          cout << "Task " << (*done)->start->loc % col - 1 << " "
+               << (*done)->start->loc / col - 1 << "-->"
+               << (*done)->goal->loc % col - 1 << " "
+               << (*done)->goal->loc / col - 1 << " is done at Timestep "
+               << (*done)->ag_arrive_goal << endl;
+      } else {
+        it++;
+      }
+    }
+    it = token.ag_tasks[ag->id].begin();
+    while (it != token.ag_tasks[ag->id].end()) {
+      if (TAKEN == (*it)->state && token.timestep >= (*it)->ag_arrive_start) {
+        list<Task *>::iterator done = it++;
+        token.ag_tasks[ag->id].erase(done);
         if (verbose)
           cout << "Task " << (*done)->start->loc % col - 1 << " "
                << (*done)->start->loc / col - 1 << "-->"
