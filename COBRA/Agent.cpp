@@ -115,15 +115,29 @@ bool Agent::TOTP(Token &token, bool verbose) {
 
   Task *task = NULL;
   list<Task *>::iterator n;
-  for (list<Task *>::iterator it = token.tasks.begin(); it != token.tasks.end();
-       it++) {
-    if (hold[(*it)->start->loc] || hold[(*it)->goal->loc])
-      continue;
-    else if (NULL == task)
-      task = (*it);
-    else if ((*it)->start->h_val[loc] < task->start->h_val[loc]) {
-      task = *it;
-      n = it;
+  if (token.ag_tasks[id].empty()) {
+    for (list<Task *>::iterator it = token.tasks.begin();
+         it != token.tasks.end(); it++) {
+      if (hold[(*it)->start->loc] || hold[(*it)->goal->loc])
+        continue;
+      else if (NULL == task)
+        task = (*it);
+      else if ((*it)->start->h_val[loc] < task->start->h_val[loc]) {
+        task = *it;
+        n = it;
+      }
+    }
+  } else {
+    for (list<Task *>::iterator it = token.ag_tasks[id].begin();
+         it != token.ag_tasks[id].end(); it++) {
+      if (hold[(*it)->start->loc] || hold[(*it)->goal->loc])
+        continue;
+      else if (NULL == task)
+        task = (*it);
+      else if ((*it)->start->h_val[loc] < task->start->h_val[loc]) {
+        task = *it;
+        n = it;
+      }
     }
   }
   if (NULL == task) // No available tasks
@@ -207,8 +221,11 @@ bool Agent::TOTP(Token &token, bool verbose) {
     task->state = TAKEN;
     // cout << "Task " << task->start->loc << "-->" << task->goal->loc << " is
     // done at Timestep " << task->ag_arrive_goal << endl;
-    token.tasks.remove(task);
-
+    if (token.ag_tasks[id].empty()) {
+      token.tasks.remove(task);
+    } else {
+      token.ag_tasks[id].remove(task);
+    }
     return true;
   }
 

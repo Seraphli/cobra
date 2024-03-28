@@ -243,12 +243,21 @@ void Simulation::run_TOTP(bool verbose) {
         continue;
       for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
            it++) {
-        token.tasks.push_back(&(*it));
+        if (it->aid == -1) {
+          token.tasks.push_back(&(*it));
+        } else {
+          token.ag_tasks[it->aid].push_back(&(*it));
+        }
       }
     }
     // update timestep
     token.timestep = ag->finish_time;
     ag->loc = ag->path[token.timestep];
+    if (verbose) {
+      cout << "Timestep: " << token.timestep << endl;
+      PrintPathUntilTimestep(token.timestep + 1);
+      PrintTaskUntilTimestep(token.timestep + 20);
+    }
 
     if (token.timestep > 0) {
       end_timestep = token.timestep;
