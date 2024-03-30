@@ -349,6 +349,8 @@ bool Agent::TPTR(Token &token, bool verbose) {
           } else // swap the task
           {
             Agent *old_ag = n.task->ag;
+            unsigned int old_arrive_start = n.task->ag_arrive_start;
+            unsigned int old_arrive_goal = n.task->ag_arrive_goal;
             // show
             if (verbose) {
               cout << "Agent " << id << " swaps task " << n.task->id << " "
@@ -374,7 +376,18 @@ bool Agent::TPTR(Token &token, bool verbose) {
             {
               if (verbose)
                 cout << "Swap fails" << endl;
-              return true;
+
+              // // update task
+              // n.task->ag = old_ag;
+              // n.task->ag_arrive_start = old_arrive_start;
+              // n.task->ag_arrive_goal = old_arrive_goal;
+              // // update token path
+              // for (int i = token.timestep; i < token.path[id].size(); i++) {
+              //   path[i] = agent_copy.path[i];
+              //   token.path[id][i] = path[i];
+              // }
+              // this->finish_time = agent_copy.finish_time;
+              // continue;
             }
           }
 
