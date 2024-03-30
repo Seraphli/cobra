@@ -212,15 +212,8 @@ void Simulation::run_TOTP(bool verbose) {
   while (!token.tasks.empty() || token.timestep <= t_task) {
     if (elapsed_ms() > deadline_time) {
       end_timestep = token.timestep;
-      for (unsigned int i = 0; i < 1; i++) {
-        if (tasks[i].size() == 0)
-          continue;
-        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
-             it++) {
-          if (it->state == TAKEN)
-            end_timestep = min(end_timestep, it->ag_arrive_goal);
-        }
-      }
+      if (end_timestep == 0)
+        end_timestep = 1;
       if (verbose)
         cerr << "Deadline reached." << endl;
       break;
@@ -320,15 +313,8 @@ void Simulation::run_TPTR(bool verbose) {
   while (!token.tasks.empty() || token.timestep <= t_task) {
     if (elapsed_ms() > deadline_time) {
       end_timestep = token.timestep;
-      for (unsigned int i = 0; i < 1; i++) {
-        if (tasks[i].size() == 0)
-          continue;
-        for (list<Task>::iterator it = tasks[i].begin(); it != tasks[i].end();
-             it++) {
-          if (it->state == TAKEN)
-            end_timestep = min(end_timestep, it->ag_arrive_goal);
-        }
-      }
+      if (end_timestep == 0)
+        end_timestep = 1;
       if (verbose)
         cerr << "Deadline reached." << endl;
       break;
