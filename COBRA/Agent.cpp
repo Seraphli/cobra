@@ -377,17 +377,15 @@ bool Agent::TPTR(Token &token, bool verbose) {
               if (verbose)
                 cout << "Swap fails" << endl;
 
-              // // update task
-              // n.task->ag = old_ag;
-              // n.task->ag_arrive_start = old_arrive_start;
-              // n.task->ag_arrive_goal = old_arrive_goal;
-              // // update token path
-              // for (int i = token.timestep; i < token.path[id].size(); i++) {
-              //   path[i] = agent_copy.path[i];
-              //   token.path[id][i] = path[i];
-              // }
-              // this->finish_time = agent_copy.finish_time;
-              // continue;
+              n.task->ag = old_ag;
+              n.task->ag_arrive_start = old_arrive_start;
+              n.task->ag_arrive_goal = old_arrive_goal;
+              for (int i = token.timestep; i < token.path[id].size(); i++) {
+                path[i] = agent_copy.path[i];
+                token.path[id][i] = path[i];
+              }
+              this->finish_time = agent_copy.finish_time;
+              continue;
             }
           }
 
